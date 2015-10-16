@@ -1,0 +1,7 @@
+Para construir:
+
+$ make;
+
+recomiendo tener instalado texlive 'full'
+
+probado en OpenBSD con make y gnumake (gmake)
