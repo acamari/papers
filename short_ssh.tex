@@ -1,0 +1,266 @@
+\documentclass[11pt,spanish]{article}
+
+\usepackage[a6paper, landscape,
+	left=1cm, top=1cm, right=1cm, bottom=1.5cm
+]{geometry}
+%\usepackage[a4paper, margin=3cm]{geometry}
+\usepackage{babel}
+\usepackage{xltxtra}
+\usepackage{grid-system}
+\usepackage{multicol} % simpler than grid for lots of cases
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{fancyhdr}
+\usepackage{listings}
+
+\setmainfont{Comic Sans MS}
+%\setmathfont{eulervm}
+%\lstset{basicstyle=\footnotesize\ttfamily}
+\lstset{basicstyle=\footnotesize\setmainfont{DejaVu Sans Mono}}
+
+\definecolor{verletblue}{HTML}{487AD8}
+\definecolor{verletgreen}{HTML}{37DE88}
+\definecolor{verletcyan}{HTML}{1AFBFF}
+
+\fancyhead{}
+\fancyfoot{}
+\fancyfoot[RO]{{\footnotesize \thepage\ de\ \pageref*{lastpage}}}
+\renewcommand{\headrule}{}
+%\renewcommand{\footrule}{\vbox to 0pt{\hbox to\headwidth{\dotfill}\vss}}
+% XXX should find way to use only one right aligned rule...
+\renewcommand{\footrule}{{\footnotesize \rule{\textwidth - 5ex}{0pt}\rule{5ex}{1pt}\vss}}
+\pagestyle{fancy}
+
+\newcommand{\fr}[1]{%
+	\begin{flushright}
+		#1
+	\end{flushright}
+}
+%row space
+\newcommand{\rowsp}[1][1em]{\vspace{#1}}
+\newcommand{\hone}[1]{{\rowsp[0.3em]\noindent\Large #1 \rowsp[0.3em]}}
+\newcommand{\htwo}[1]{{\rowsp\noindent\large #1 \rowsp}}
+\newcommand{\htworuler}[1]{{%
+	\rowsp\noindent\Large #1%
+	\\ {\color{verletgreen}\noindent\rule{\textwidth + 2em}{0.5em}}\rowsp%
+}}
+\newcommand{\hthree}[1]{{\rowsp\noindent\large #1 \rowsp[0.5em]}}
+\newcommand{\hfour}[1]{{\rowsp\large #1 \rowsp[0.5em]}}
+\newcommand{\for}[1]{{#1 \rowsp}}
+\newcommand{\signline}{\rule{\textwidth}{1pt}}
+\newcommand{\emptycell}[1][1]{\begin{Cell}{#1}\ \end{Cell}}
+
+%=======================
+% specific to presentations
+%\newcommand{\myitm}{aoeuaeou}
+\newcommand{\myitm}[1]{\begin{itemize}#1\end{itemize}}
+
+\newcommand{\mydesc}[1]{%
+	\begin{description}
+	\setlength\itemsep{0em}%
+	#1
+	\end{description}
+}
+\newcommand{\pros}{\item[pros:]}
+\newcommand{\cons}{\item[cons:]}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+%=======================
+
+%\renewcommand{\emph}[1]{\emph{#1}}
+
+\title{Nombres cortos en ssh(1)}
+\author{Abel Camarillo $<$acamari@verlet.org$>$}
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+\includegraphics[height=0.3\textheight]{img/puflogh}
+\end{center}
+
+
+\newpage %===============
+\hone{Supuestos}
+
+Hay que conectarse a varios clientes:
+\myitm{
+	\item neuroservices
+	\item linkaform
+	\item movivendor
+	\item cloudsigma
+}
+
+\newpage %===============
+
+\hone{Supuestos (cont.)}
+
+Cada cliente usa varios dominios:
+\begin{multicols}{2}
+\myitm{
+	\item Neuroservices
+	\myitm{
+		\item neuroservices.com.mx
+		\item neuroservices.net.mx
+		\item neuroservices.mx
+		\item e-guard.com.mx
+		\item e-guard.net.mx
+		\item e-guard.mx
+	}
+
+	\item Linkaform
+	\myitm{
+		\item lkf.cloud
+		\item linkaform.com.mx
+		\item linkaform.mx
+	}
+	\columnbreak
+
+	\item Movivendor
+	\myitm{
+		\item movivendor-old.com
+		\item movivendor-new.mx
+		\item movivendor.com.mx
+	}
+
+}
+\end{multicols}
+
+\newpage %===============
+
+\hone{Opciones}
+
+\myitm{
+	\item \$HOME/.ssh/config
+	\item /etc/hosts
+	\item /etc/resolv.conf (y derivados)
+}
+
+\newpage %===============
+
+\hone{\$HOME/.ssh/config}
+
+\begin{lstlisting}
+	$ cat $HOME/.ssh/config
+	Host www-neuroservices
+	HostName www.neuroservices.net.mx
+
+	Host www-linkaform
+	HostName www.linkaform.com.mx
+\end{lstlisting}
+
+\myitm{
+	\pros No necesita root
+	\cons Sólo funciona con ssh, no con más programas
+	\cons Más administración: dar de alta, ¿manejo de actualizaciones?
+	\cons ¿Cómo distinguir el dominio \lstinline{www} entre clientes?
+	\myitm{
+		\item Usar sufijos
+		\item Ya no está realmente corto...
+	}
+}
+
+\newpage %===============
+
+\hone{/etc/hosts}
+
+\begin{lstlisting}
+	$ cat > /etc/hosts
+	1.1.1.1 www-neuroservices
+	2.2.2.2 www-linkaform
+\end{lstlisting}
+
+\myitm{
+	\cons Mismos que \$HOME/.ssh/config
+	\cons Más administración:
+	\myitm{
+		\item Sólo permite dominio $->$ ip
+		\item No permite dominio $->$ dominio
+	}
+	\pros Funciona con todos los programas: ssh(1), ping(8), nc(1), curl(1), etc.
+}
+
+\newpage %===============
+
+\hone{/etc/resolv.conf}
+
+\begin{lstlisting}
+	$ cat > /etc/hosts
+	search neuroservices.com.mx neuroservices.net.mx \
+		neuroservices.mx
+	^D
+	$ ssh x;
+\end{lstlisting}
+
+Busca x en x.neuroservices.com.mx, sino en x.neuroservices.net.mx sino en
+x.neuroservices.mx.
+
+\myitm{
+	\cons Requiere root
+	\pros Funciona con todos los programas
+	\pros Baja administración
+	\pros Unificación con los nombres globales (no genera nombres nuevos)
+	\item ¿Cómo cambiar de cliente?
+}
+
+\newpage %===============
+
+\hone{LOCALDOMAIN}
+
+\begin{lstlisting}
+	$ export LOCALDOMAIN="neuroservices.com.mx \
+		neuroservices.net.mx \
+		neuroservices.mx"
+	$ ssh www; # www.neuroservices.com.mx
+
+	$ export LOCALDOMAIN="linkaform.com.mx
+		lkf.cloud \
+		linkaform.mx"
+	$ ssh postgres; # postgres.lkf.cloud
+\end{lstlisting}
+
+\myitm{
+	\pros Mismos que el anterior
+	\pros No requiere root
+	\pros Fácil cambiar de cliente
+	\pros Integrable a .bashrc / .kshrc
+}
+
+\newpage %===============
+
+\hone{LOCALDOMAIN}
+
+Integrable con la shell, fácil cambiar de usuario:
+
+\begin{lstlisting}
+	$ cat >> ~/.kshrc
+	alias neuro='export LOCALDOMAIN="neuroservices.com.mx \
+		neuroservices.net.mx \
+		neuroservices.mx"'
+	alias linkaform='export LOCALDOMAIN="linkaform.com.mx \
+		lkf.cloud \
+		linkaform.mx"'
+	$ ksh -l # reloads .kshrc
+	$ ssh postgres; # NOT FOUND
+	$ neuro
+	$ ssh postgres; # NOT FOUND
+	$ linkaform
+	$ ssh postgres; # postgres.lkf.cloud
+\end{lstlisting}
+
+\newpage %===============
+\ 
+\vspace{\stretch{1}}
+\begin{center}
+\hone{Gracias}
+\end{center}
+\vspace{\stretch{1}}
+
+\label{lastpage}
+\end{document}
