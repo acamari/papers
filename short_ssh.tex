@@ -143,7 +143,7 @@ Cada cliente usa varios dominios:
 \hone{\$HOME/.ssh/config}
 
 \begin{lstlisting}
-	$ cat $HOME/.ssh/config
+	$ cat >> $HOME/.ssh/config
 	Host www-neuroservices
 	HostName www.neuroservices.net.mx
 
@@ -167,13 +167,14 @@ Cada cliente usa varios dominios:
 \hone{/etc/hosts}
 
 \begin{lstlisting}
-	$ cat > /etc/hosts
+	# cat >> /etc/hosts
 	1.1.1.1 www-neuroservices
 	2.2.2.2 www-linkaform
 \end{lstlisting}
 
 \myitm{
 	\cons Mismos que \$HOME/.ssh/config
+	\cons Requiere root
 	\cons Más administración:
 	\myitm{
 		\item Sólo permite dominio $->$ ip
@@ -187,7 +188,7 @@ Cada cliente usa varios dominios:
 \hone{/etc/resolv.conf}
 
 \begin{lstlisting}
-	$ cat > /etc/hosts
+	# cat > /etc/resolv.conf
 	search neuroservices.com.mx neuroservices.net.mx \
 		neuroservices.mx
 	^D
@@ -232,7 +233,7 @@ x.neuroservices.mx.
 
 \hone{LOCALDOMAIN}
 
-Integrable con la shell, fácil cambiar de usuario:
+Integrable con la shell, fácil cambiar de cliente:
 
 \begin{lstlisting}
 	$ cat >> ~/.kshrc
