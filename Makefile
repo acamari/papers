@@ -20,4 +20,7 @@ build: dirs ${dst} ${dstdot}
 dirs: 
 	mkdir -p ${BUILD}
 
+clean:
+	rm ${dst} ${dstdot}
+
 .PHONY: dirs
