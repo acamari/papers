@@ -1,0 +1,12 @@
+digraph {
+	label="Arquitectura prometheus (original)"
+
+	subgraph cluster_host {
+		label="host";
+		proc [label="/proc, /sys"]
+		node_exporter -> proc [label="read(2)"]
+	}
+	usuario -> grafana [label="http[s]://*:[80|443]/"]
+	grafana -> prometheus [label="http://*:9090/"];
+	prometheus -> node_exporter [label="http://*:9100/metrics cada 15 seg\nHTTPS no disponible"];
+}

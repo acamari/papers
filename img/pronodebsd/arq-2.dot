@@ -1,0 +1,17 @@
+digraph {
+	label="Arquitectura prometheus (pronodebsd)"
+
+	subgraph cluster_host {
+		label="host"
+		www [label="httpd(8), nginx(8), etc"]
+		metrics [label="/var/www/pronodebsd/metrics"]
+		pronodebsd [label="pronodebsd(1)",color=red,fontcolor=red]
+
+		www -> metrics [label="read(2) por petición"]
+		pronodebsd -> metrics [label="write(2) cada 5s"]
+		pronodebsd -> kernel [label="sysctl(3)"]
+	}
+	usuario -> grafana [label="http[s]://*:[80|443]/"]
+	grafana -> prometheus [label="http://*:9090/"]
+	prometheus -> www [label="http://*:9100/metrics cada 15 seg"]
+}

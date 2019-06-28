@@ -1,7 +1,7 @@
 src!=echo *.tex
 dst=${src:%.tex=%.pdf}
-#srcdot!=echo img/*.dot
-#dstdot=${srcdot:%.dot=%.pdf}
+srcdot!=find img -name '*.dot' | tee /dev/stderr
+dstdot=${srcdot:%.dot=%.pdf}
 LATEX=xelatex
 LATEXFLAGS=-output-dir=${BUILD} -interaction=nonstopmode -halt-on-error
 BUILD=build
@@ -9,18 +9,19 @@ dirs=${BUILD}
 
 .SUFFIXES: .tex .pdf .dot
 
-build: dirs ${dst} ${dstdot} 
+build: dirs ${dst} ${dstdot}
 
-.tex.pdf: 
+.tex.pdf:
 	${LATEX} ${LATEXFLAGS} $< && mv ${BUILD}/$@ $@
 
-.dot.pdf: 
+.dot.pdf:
 	dot -Tpdf $< > $@
 
-dirs: 
+dirs:
 	mkdir -p ${BUILD}
 
 clean:
 	rm ${dst} ${dstdot}
 
+pronodebsd.pdf: img/pronodebsd/arq.pdf img/pronodebsd/arq-2.pdf
 .PHONY: dirs
