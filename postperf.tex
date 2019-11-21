@@ -192,6 +192,62 @@ db=#
 \newpage %===============
 \hone{Cómo medir tiempos actuales}
 
+\htwo{pgbadger}
+
+De \url{http://pgbadger.darold.net/samplev7.html#time-consuming-queries}
+
+\includegraphics[width=\textwidth]{img/pgbadger-tm1}
+
+\newpage %===============
+\hone{Cómo medir tiempos actuales}
+\htwo{pgbadger}
+
+\includegraphics[scale=0.4]{img/pgbadger-tm2}
+
+\newpage %===============
+\hone{Cómo medir tiempos actuales}
+
+\htwo{pgbadger}
+
+Configuración pg para pgbadger:
+
+\begin{lstlisting}
+# -1 is disabled, 0 logs all statements
+log_min_duration_statement = 50 
+
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+log_line_prefix = '%t [%p]: db=%d,user=%u,app=%a,client=%h '
+		# special values:
+		#   %a = application name
+		#   %u = user name
+		#   %d = database name
+		#   %r = remote host and port
+		#   %h = remote host
+		#   %p = process ID
+		#   %t = timestamp without milliseconds
+		#   %m = timestamp with milliseconds
+		#   %n = timestamp with milliseconds (as a Unix epoch)
+		#   %i = command tag
+		#   %e = SQL state
+		#   %c = session ID
+		#   %l = session line number
+		#   %s = session start timestamp
+		#   %v = virtual transaction ID
+		#   %x = transaction ID (0 if none)
+		#   %q = stop here in non-session
+		#        processes
+		#   %% = '%'
+		# e.g. '<%u%%%d> '
+log_lock_waits = on                     # log lock waits >= deadlock_timeout
+log_temp_files = 0	# -1 disables, 0 logs all temp files
+\end{lstlisting}
+
+
+\newpage %===============
+\hone{Cómo medir tiempos actuales}
+
 \vspace{\stretch{1}}
 \begin{center}
 \htwo{Cualquier mecanismo que tenga su lenguaje/aplicación}
