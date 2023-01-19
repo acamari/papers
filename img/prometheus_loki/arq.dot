@@ -1,0 +1,46 @@
+digraph {
+	label="Arquitectura integrada"
+
+	subgraph cluster_host {
+		label="host aplicación";
+		node_exporter
+		blackbox_exporter
+	}
+	subgraph cluster_pg {
+		label="host postgres";
+		postgresql_exporter
+		postgres [shape=cylinder]
+		postgresql_exporter -> postgres [label="SELECT\nTCP\n:5432"]
+	}
+	subgraph cluster_colector {
+		label="host colector";
+		snmp_exporter
+		agentx [label="agentX"]
+	}
+	subgraph cluster_monitor {
+		color=orange
+		label="host monitor";
+		grafana
+		prometheus
+		alert_manager
+		// loki
+	}
+	laptop_usuario [shape=plaintext]
+	laptop_usuario -> grafana [label="http[s]://*:[80|443]/"]
+	webhook [shape=note,label="slack/\ngoogle chat/\netc..."]
+	smtp [shape=note,label="SMTP\nmailchimp/\nmailjet/\netc"]
+	grafana -> prometheus [label="GET (*:9090)"]
+	// grafana -> loki [label="GET (*:9090)"]
+	prometheus -> alert_manager [label="POST\nHTTP\n(:9093)"]
+	alert_manager -> webhook [label="POST\nHTTP\n(push)"]
+	alert_manager -> smtp [label="SMTP (:587)"]
+
+	prometheus -> node_exporter [label="GET http://*:9100/metrics"]
+	prometheus -> blackbox_exporter [label="GET http://*:9110/metrics"]
+	prometheus -> snmp_exporter [label="GET http://*:9116/metrics"]
+	prometheus -> postgresql_exporter [label="GET http://*:9187/metrics"]
+
+	switch [label="switch L2/L3",shape=box3d]
+	snmp_exporter -> switch [label="SNMP\n(UDP:161)\npull"]
+	snmp_exporter -> agentx [label="SNMP\n(UDP:161)\npull"]
+}

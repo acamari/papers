@@ -1,0 +1,25 @@
+digraph {
+	label="Arquitectura prometheus"
+
+	subgraph cluster_monitor {
+		color=orange
+		label="host monitor";
+		grafana
+		prometheus
+		alert_manager
+		// loki
+	}
+	laptop_usuario [shape=plaintext]
+	laptop_usuario -> grafana [label="http[s]://*:[80|443]/"]
+	webhook [shape=note,label="slack/\ngoogle chat/\netc..."]
+	smtp [shape=note,label="SMTP\nmailchimp/\nmailjet/\netc"]
+	grafana -> prometheus [label="GET (*:9090)"]
+	// grafana -> loki [label="GET (*:9090)"]
+	prometheus -> alert_manager [label="POST\nHTTP\n(:9093)"]
+	alert_manager -> webhook [label="POST\nHTTP\n(push)"]
+	alert_manager -> smtp [label="SMTP (:587)"]
+
+	prometheus -> host [label="HTTP GET"]
+	host [color=transparent,label="exporters ..."]
+
+}
